@@ -1,7 +1,7 @@
 import Camera from "../../node_modules/dlib/3d/Camera.js";
 import GLRayMarchingObject from "../../node_modules/dlib/gl/objects/GLRayMarchingObject.js";
 import TrackballController from "../../node_modules/dlib/3d/controllers/TrackballController.js";
-import Matrix4 from "../../node_modules/dlib/math/Matrix4.js";
+import Vector3 from "../../node_modules/dlib/math/Vector3.js";
 
 export default class View {
   constructor({
@@ -34,17 +34,16 @@ export default class View {
     this.gl.enable(this.gl.DEPTH_TEST);
 
     const sdfObjects = [];
-    for (let index = 0; index < 30; index++) {
+    for (let index = 0; index < 40; index++) {
       sdfObjects.push({
-        _speed: .1 + Math.random() * .1,
+        _speed: .05 + Math.random() * .05,
         spherical: 1,
-        size: .8,
         blend: 1,
-        position: [
+        position: new Vector3([
+          (Math.random() * 2 - 1) * 5,
           Math.random() * 2 - 1,
           Math.random() * 2 - 1,
-          Math.random() * 2 - 1,
-        ],
+        ]),
       });
     }
     this.object = new GLRayMarchingObject({
@@ -65,9 +64,13 @@ export default class View {
     this.cameraController.update();
 
     for (const sdfObject of this.object.sdfObjects) {
-      sdfObject.position[0] += sdfObject._speed;
-      if (sdfObject.position[0] > 5) {
-        sdfObject.position[0] = -5;
+      sdfObject.position.x += sdfObject._speed;
+      sdfObject.size = 1 - Math.abs(Math.min(10, (sdfObject.position.x + 5)) / 10 * 2 - 1);
+      if (sdfObject.position.x > 5) {
+        sdfObject.position.x = -5;
+        sdfObject.position.y = Math.random() * 2 - 1;
+        sdfObject.position.z = Math.random() * 2 - 1;
+        sdfObject._speed = Math.random() * .05 + .05;
       }
     }
 
@@ -75,7 +78,6 @@ export default class View {
       // mode: this.gl.LINES,
       uniforms: {
         sdfObjects: this.object.sdfObjects,
-        viewportSize: [this.gl.drawingBufferWidth, this.gl.drawingBufferHeight],
         camera: this.camera,
       },
     });

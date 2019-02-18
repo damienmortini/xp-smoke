@@ -42,8 +42,11 @@ window.customElements.define("xp-smoke", class extends TickerElement {
     const width = this.canvas.offsetWidth;
     const height = this.canvas.offsetHeight;
 
-    this.canvas.width = width * window.devicePixelRatio;
-    this.canvas.height = height * window.devicePixelRatio;
+    // this.canvas.width = width * window.devicePixelRatio;
+    // this.canvas.height = height * window.devicePixelRatio;
+
+    this.canvas.width = width;
+    this.canvas.height = height;
 
     this.view.resize(width, height);
   }

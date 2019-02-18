@@ -34,11 +34,12 @@ export default class View {
     this.gl.enable(this.gl.DEPTH_TEST);
 
     const sdfObjects = [];
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 30; index++) {
       sdfObjects.push({
+        _speed: .1 + Math.random() * .1,
         spherical: 1,
-        size: 1,
-        blend: 0,
+        size: .8,
+        blend: 1,
         position: [
           Math.random() * 2 - 1,
           Math.random() * 2 - 1,
@@ -63,9 +64,18 @@ export default class View {
 
     this.cameraController.update();
 
+    for (const sdfObject of this.object.sdfObjects) {
+      sdfObject.position[0] += sdfObject._speed;
+      if (sdfObject.position[0] > 5) {
+        sdfObject.position[0] = -5;
+      }
+    }
+
     this.object.draw({
+      // mode: this.gl.LINES,
       uniforms: {
         sdfObjects: this.object.sdfObjects,
+        viewportSize: [this.gl.drawingBufferWidth, this.gl.drawingBufferHeight],
         camera: this.camera,
       },
     });

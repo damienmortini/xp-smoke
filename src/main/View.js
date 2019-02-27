@@ -37,8 +37,14 @@ export default class View {
     for (let index = 0; index < 40; index++) {
       sdfObjects.push({
         _speed: .05 + Math.random() * .05,
-        spherical: 1,
+        shape: "sphere",
         blend: 1,
+        material: [
+          Math.random(),
+          Math.random(),
+          Math.random(),
+          1,
+        ],
         position: new Vector3([
           (Math.random() * 2 - 1) * 5,
           Math.random() * 2 - 1,
@@ -49,6 +55,18 @@ export default class View {
     this.object = new GLRayMarchingObject({
       gl: this.gl,
       sdfObjects,
+      shaders: [
+        {
+          fragmentShaderChunks: [
+            ["end", `
+              float lightRatio = max(0., dot(normal, normalize(vec3(1., 1., -1.))));
+              vec3 color = voxel.material.rgb;
+              color += lightRatio;
+              fragColor = vec4(color, voxel.material.a);
+            `],
+          ],
+        },
+      ],
     });
   }
 
